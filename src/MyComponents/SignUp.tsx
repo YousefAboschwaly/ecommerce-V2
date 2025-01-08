@@ -1,6 +1,6 @@
 
 
-import React,{ useEffect, useState } from "react"
+import React,{ useContext, useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Github, Mail, AlertCircle, Eye, EyeOff, Loader2,X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useFormik } from "formik"
 import axios from "axios"
 import * as Yup from "yup"
+import { UserContext } from "@/Context/UserContext"
 
 interface ISignUpForm {
   name: string
@@ -100,17 +101,17 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   )
 }
 
-const Home4UAnimation = () => {
+const FreshCartAnimation = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const items = [
-    { src: "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=800&auto=format&fit=crop&q=60", alt: "Modern Kitchen Appliances" },
-    { src: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=800&auto=format&fit=crop&q=60", alt: "Smart Home Devices" },
-    { src: "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=800&auto=format&fit=crop&q=60", alt: "Vacuum Cleaner" },
-    { src: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=800&auto=format&fit=crop&q=60", alt: "Home Entertainment System" },
-    { src: "https://images.unsplash.com/photo-1632829882891-5047ccc421bc?w=800&auto=format&fit=crop&q=60", alt: "Power Tools" },
-    { src: "https://images.unsplash.com/photo-1507207611509-ec012433ff52?w=800&auto=format&fit=crop&q=60", alt: "Smart Thermostat" },
-    { src: "https://images.unsplash.com/photo-1632829882891-5047ccc421bc?w=800&auto=format&fit=crop&q=60", alt: "Power Tools" },
-    { src: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=800&auto=format&fit=crop&q=60", alt: "Coffee Maker" },
+
+    { src: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=1000", alt: "Shoes" },
+    {src:"https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=1000",alt: "Men's shoes" }, 
+    { src: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&q=80&w=1000", alt: "Men shoes" },
+    {src:"https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=1000",alt: " Men's accessories" }, 
+    { src: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1000", alt: "Laptops" },
+    { src: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1000", alt: "Smart Watch" },
+    {src:"https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&q=80&w=1000",alt: "Smart watch" } 
   ]
 
   useEffect(() => {
@@ -121,8 +122,8 @@ const Home4UAnimation = () => {
   }, [items.length])
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&auto=format&fit=crop&q=60')] bg-cover bg-center opacity-20"></div>
+    <div className="relative w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=1000?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-20"></div>
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
           className="w-full h-full"
@@ -135,10 +136,10 @@ const Home4UAnimation = () => {
               key={currentIndex}
               src={items[currentIndex].src}
               alt={items[currentIndex].alt}
-              className="w-full h-full object-cover rounded-lg shadow-2xl"
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
+              className="w-full h-full object-cover  shadow-2xl"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.5 }}
             />
           </AnimatePresence>
@@ -146,23 +147,24 @@ const Home4UAnimation = () => {
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent " />
       <motion.div
-        className="absolute inset-x-0 bottom-0 p-8"
-        initial={{ y: "100%" }}
+        className="absolute inset-x-0 bottom-10 p-8"
+        initial={{ y: "140%" }}
         animate={{ y: "0%" }}
         transition={{ duration: 1, delay: 0.5 }}
       >
         <div className="flex justify-center mb-4">
-          <h2 className="text-4xl font-bold text-white text-center mb-4">Welcome to Home4U</h2>
+          <h2 className="text-4xl font-bold text-white text-center mb-4">Welcome to FreshCart</h2>
         </div>
-        <p className="text-xl text-white text-center">Your one-stop shop for home appliances and smart devices</p>
+        <p className="text-xl text-white text-center">Your ultimate destination for fashion, electronics, and everything in between</p>
       </motion.div>
     </div>
   )
 }
 
 
+
 const Alert = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(onClose, 10000);
     return () => clearTimeout(timer);
   }, [onClose]);
@@ -190,7 +192,12 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false)
   const [alert, setAlert] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
   let navigate = useNavigate()
-
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error("UserContext must be used within a UserContextProvider");
+  }
+  const { setUserToken } = userContext;  
+  
   let validationSchema = Yup.object().shape({
     name: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -210,8 +217,9 @@ export default function SignUp() {
         formValues
       )
       if (data.message === "success") {
-        setAlert({ message: "SignUp Successful. Welcome to Home4U!", type: 'success' });
-        setTimeout(() => {navigate("/") ; setIsLoading(false)}, 3000);  // Small delay to show toaster before navigating
+        localStorage.setItem('userToken' , data?.token)
+        setAlert({ message: "SignUp Successful. Welcome to Freshcart 🛒", type: 'success' });
+        setTimeout(() => { setUserToken(data?.token);navigate("/") ; setIsLoading(false)}, 3000);  // Small delay to show toaster before navigating
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -258,7 +266,7 @@ export default function SignUp() {
       <div className="flex-1 flex items-center justify-center p-6 bg-background">
         <Card className="w-full max-w-md p-6">
           <div className="flex flex-col space-y-2 text-center mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">Sign up for Home4U</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Sign up for Freshcart</h1>
             <p className="text-sm text-muted-foreground">Your one-stop shop for home appliances and smart devices</p>
           </div>
 
@@ -442,7 +450,7 @@ export default function SignUp() {
         </Card>
       </div>
       <div className="hidden md:block flex-1 relative overflow-hidden">
-        <Home4UAnimation />
+        <FreshCartAnimation />
       </div>
     </div>
     </>

@@ -71,3 +71,7 @@
 .product:hover{
   box-shadow: 1px 1px 10px #4fa74f;
 }
+
+.product:hover .add-btn{
+  @apply translate-y-0 opacity-100
+}

@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import * as React from "react"
+import React, { useEffect, useContext, ReactNode, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Github, Mail, Lock, AlertCircle, Eye, EyeOff, Loader2, X } from "lucide-react"
+import { Github, Mail, AlertCircle, Eye, EyeOff, Loader2, X, ShoppingCart } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,8 +11,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { useFormik } from "formik"
 import axios from "axios"
 import * as Yup from "yup"
+import { UserContext } from "@/Context/UserContext"
 
-const InputAnimation = ({ children }: { children: React.ReactNode }) => (
+const InputAnimation = ({ children }: { children: ReactNode }) => (
   <motion.div
     initial={{ opacity: 0, x: -20 }}
     animate={{ opacity: 1, x: 0 }}
@@ -39,7 +40,7 @@ const PasswordInput = ({
   error?: string
   touched?: boolean
 }) => {
-  const [showPassword, setShowPassword] = React.useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -88,7 +89,7 @@ const ErrorMessage = ({ message }: { message: string }) => (
 )
 
 const Alert = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(onClose, 10000);
     return () => clearTimeout(timer);
   }, [onClose]);
@@ -112,15 +113,17 @@ const Alert = ({ message, type, onClose }: { message: string; type: 'success' | 
 
 const BackgroundSlider = () => {
   const images = [
-    "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1200&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=1200&auto=format&fit=crop&q=60",
+    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=1000", //Shoes
+    "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=1000", // Men's shoes
+    "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&q=80&w=1000", //Men's shoes
+    "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&q=80&w=1000", // Men's accessories
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1000", //Smart Watch
+    "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&q=80&w=1000", // Smartwatch
+    "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1000", //Laptops
   ]
-  const [currentIndex, setCurrentIndex] = React.useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
     }, 5000)
@@ -133,11 +136,11 @@ const BackgroundSlider = () => {
         <motion.img
           key={currentIndex}
           src={images[currentIndex]}
-          alt={`Home appliance ${currentIndex + 1}`}
+          alt={`FreshCart product ${currentIndex + 1}`}
           className="absolute inset-0 w-full h-full object-cover"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 1 }}
         />
       </AnimatePresence>
@@ -152,36 +155,23 @@ const LoginAnimation = () => {
       <BackgroundSlider />
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-8"
-        >
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 5,
-              ease: "easeInOut",
-              times: [0, 0.5, 1],
-              repeat: Infinity,
-            }}
-          >
-            <Lock className="w-16 h-16 text-primary" />
-          </motion.div>
-        </motion.div>
-        <motion.div
-          initial={{ y: "100%" }}
-          animate={{ y: "0%" }}
-          transition={{ duration: 1, delay: 0.5 }}
           className="text-center text-white"
         >
-          <h2 className="text-4xl font-bold mb-4">Welcome to Home4U</h2>
+          <h2 className="text-4xl font-bold mb-4 ">Welcome to FreshCart</h2>
           <p className="text-xl">
-            Your smart home ecosystem for household appliances and tools
+            Your ultimate destination for fashion, electronics, and more
           </p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+          className="mt-8"
+        >
+          <ShoppingCart className="w-24 h-24 text-white" />
         </motion.div>
       </div>
     </div>
@@ -194,11 +184,16 @@ interface ILogInForm {
 }
 
 export default function Login() {
-  const [showAccounts, setShowAccounts] = React.useState(false)
-  const [provider, setProvider] = React.useState("")
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [alert, setAlert] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showAccounts, setShowAccounts] = useState(false)
+  const [provider, setProvider] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   let navigate = useNavigate()
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error("UserContext must be used within a UserContextProvider");
+  }
+  const { setUserToken } = userContext;
 
   let validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -218,8 +213,10 @@ export default function Login() {
         formValues
       );
       if (data.message === "success") {
-        setAlert({ message: "Login Successful. Welcome back to Home4U!", type: 'success' });
-        setTimeout(() => {navigate("/") ; setIsLoading(false)}, 3000);  // Small delay to show toaster before navigating
+        localStorage.setItem('userToken' , data?.token)
+        setAlert({ message: "Login Successful. Welcome back to FreshCart!", type: 'success' });
+
+        setTimeout(() => { setUserToken(data?.token);navigate("/") ; setIsLoading(false)}, 3000);  // Small delay to show toaster before navigating
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -230,10 +227,7 @@ export default function Login() {
         setTimeout(() =>  {setAlert(null); setIsLoading(false)}, 5000); 
       }
     }
- 
   }
-
-
 
   let { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
@@ -262,7 +256,7 @@ export default function Login() {
         <Card className="w-full max-w-md p-6">
           <div className="flex flex-col space-y-2 text-center mb-6">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Login to Home4U
+              Login to FreshCart
             </h1>
             <p className="text-sm text-muted-foreground">
               Enter your credentials to access your account
@@ -383,7 +377,7 @@ export default function Login() {
                   </Button>
                 </li>
               </ul>
-            </motion.div>
+</motion.div>
           )}
           <div className="mt-4 text-center text-sm">
             <Link
