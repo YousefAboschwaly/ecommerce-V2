@@ -191,14 +191,14 @@ export default function SignUp() {
   const [provider, setProvider] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [alert, setAlert] = React.useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  let navigate = useNavigate()
+  const navigate = useNavigate()
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext must be used within a UserContextProvider");
   }
   const { setUserToken } = userContext;  
   
-  let validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     name: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().matches(/^[A-Z].{5,8}$/,'password must start with capital character and from  5 to 8 characters')
@@ -212,7 +212,7 @@ export default function SignUp() {
   async function handleSignup(formValues: ISignUpForm) {
     setIsLoading(true)
     try {
-      let { data } = await axios.post(
+      const { data } = await axios.post(
         `https://ecommerce.routemisr.com/api/v1/auth/signup`,
         formValues
       )
