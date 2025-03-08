@@ -43,6 +43,7 @@
     "swiper": "^11.2.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "type-fest": "^4.37.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
