@@ -36,7 +36,10 @@ export default function CartContextProvider({
   
 
   if(query.data){
-    localStorage.setItem("cartOwnerId", query.data.data.cartOwner)
+    if(query.data.data.cartOwner){
+
+      localStorage.setItem("cartOwnerId", query.data.data.cartOwner)
+    }
   }
 
   const [isLoading, setIsLoading] = useState(false)

@@ -32,7 +32,7 @@ export default function ProductCard({ products }: IProps) {
   if (!cartContext) {
     throw new Error("CartContext must be used within a CartContextProvider");
   }
-  const { addToCart, isLoading: isLoadingCart } = cartContext;
+  const { addToCart } = cartContext;
 
   const wishlistContext = useContext(WishlistContext);
   if (!wishlistContext) {
@@ -42,6 +42,7 @@ export default function ProductCard({ products }: IProps) {
 
   const [wishlistStatus, setWishlistStatus] = useState<Record<string, boolean>>({});
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [cartLoadingStates, setCartLoadingStates] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (query.data) {
@@ -66,6 +67,15 @@ export default function ProductCard({ products }: IProps) {
       }
     } finally {
       setLoadingStates(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleAddToCart = async (productId: string) => {
+    setCartLoadingStates(prev => ({ ...prev, [productId]: true }));
+    try {
+      await addToCart(productId);
+    } finally {
+      setCartLoadingStates(prev => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -130,10 +140,10 @@ export default function ProductCard({ products }: IProps) {
             <div className="p-4">
               <Button 
                 className="add-btn w-full bg-green-600 hover:bg-green-700 translate-y-[150%] opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100"
-                onClick={() => addToCart(product.id)}
-                disabled={isLoadingCart}
+                onClick={() => handleAddToCart(product.id)}
+                disabled={cartLoadingStates[product.id]}
               >
-                {isLoadingCart ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add +"}
+                {cartLoadingStates[product.id] ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add +"}
               </Button>
             </div>
           </Card>

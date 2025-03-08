@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext,  useState } from "react";
 import {
   ShoppingCart,
   Heart,
@@ -63,12 +63,16 @@ export default function Navbar() {
     { title: "Home", href: "/" },
     { title: "Products", href: "/products" },
     { title: "Cart", href: "/cart" },
-    { title: "Orders", href: "/allorders" },
     { title: "Wishlist", href: "/wishlist" },
     { title: "Categories", href: "/categories" },
     { title: "Brands", href: "/brands" },
   ];
-
+  
+    if( localStorage.getItem('cartOwnerId')){
+      menuItems.push(   { title: "Orders", href: "/allorders" }
+      )
+    }
+ 
   const socialIcons = [
     { Icon: Instagram, href: "https://instagram.com" },
     { Icon: Facebook, href: "https://facebook.com" },

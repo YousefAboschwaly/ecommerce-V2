@@ -48,7 +48,7 @@ export const Checkout = () => {
       setIsSubmitting(true);
     try {
       const {data} = await axios.post(
-        `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cart?.cartId}?url=http://localhost:5174`,
+        `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cart?.cartId}?url=http://localhost:5175`,
         {
           shippingAddress: formValues,
         },{
