@@ -128,7 +128,7 @@ const BackgroundSlider = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
     }, 5000)
     return () => clearInterval(timer)
-  }, [])
+  }, [images.length])
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -188,14 +188,14 @@ export default function Login() {
   const [provider, setProvider] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [alert, setAlert] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  let navigate = useNavigate()
+  const navigate = useNavigate()
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext must be used within a UserContextProvider");
   }
   const { setUserToken } = userContext;
 
-  let validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
   })
@@ -208,7 +208,7 @@ export default function Login() {
   async function handleLogIn(formValues: ILogInForm) {
     setIsLoading(true);
     try {
-      let { data } = await axios.post(
+      const { data } = await axios.post(
         `https://ecommerce.routemisr.com/api/v1/auth/signin`,
         formValues
       );
@@ -229,7 +229,7 @@ export default function Login() {
     }
   }
 
-  let { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+  const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
       initialValues: {
         email: "",

@@ -1,64 +1,47 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import {Image} from "@nextui-org/image";
-import {Card, CardHeader, CardBody}from "@nextui-org/card";
-
-interface IProduct{
-  id: string;
-  imageCover:string;
-  title:string;
-  quantity:number;
-  price:number
-}
+import useProducts from "@/hooks/useProducts";
+import LoadingScreen from "./LoadingScreen";
+import ProductCard from "@/components/ui/ProductCard";
+import { IProduct } from "@/interfaces";
+import { useEffect, useState } from "react";
+import { SearchBar } from "../components/ui/Search";
 
 export default function Products() {
+  const { data, isLoading, isError, error } = useProducts();
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 
-  
-  const [products, setProducts] = useState<IProduct[]>([])
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setFilteredProducts(data);
+    }
+  }, [data]);
 
-  // fetching Data
-  useEffect(function(){
-
-    async function getProducts() {
-      try {
-        const { data } = await axios.get(
-          "https://ecommerce.routemisr.com/api/v1/products"
-        );
-        setProducts(data.data);
-  
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
+  const handleSearch = (query: string) => {
+    if (!query) {
+      setFilteredProducts(data);
+      return;
     }
 
-    getProducts();
+    const filtered = data.filter((product: IProduct) =>
+      product.title.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  };
 
-  },[])
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (isError) {
+    console.log(error);
+    return <div>Error loading products</div>;
+  }
+
   return (
     <>
-  <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4  my-8 container">
-
-  {products.map((product) => (
-
-
-<Card className="py-4 product" key={product.id}>
-          <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-            <p className="text-tiny uppercase font-bold">{product.title}</p>
-            <small className="text-default-500">Quantity : {product.quantity}</small>
-            <h4 className="font-bold text-large">Price : {product.price}$</h4>
-          </CardHeader>
-          <CardBody className="overflow-visible py-2 text-center">
-            <Image
-              className="object-cover rounded-xl w-full"
-              src={product.imageCover}
-              alt={product.title}
-              
-            />
-          </CardBody>
-        </Card>
-
-      ))}
-  </div>
+      <div className="py-6">
+        <SearchBar onSearch={handleSearch} totalResults={filteredProducts.length} />
+      </div>
+      <ProductCard products={filteredProducts} />
     </>
-  )
+  );
 }

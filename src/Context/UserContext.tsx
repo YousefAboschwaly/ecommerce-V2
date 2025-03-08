@@ -7,6 +7,7 @@ interface UserContextType {
   setUserToken: (token: string | null) => void;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const UserContext = createContext<UserContextType | null>(null);
 
 export default function UserContextProvider({ children }: { children: ReactNode }) {

@@ -1,68 +1,86 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { StarRating } from "./Star-rating";
-import { ImageSlider } from "./Image-slider";
-import { ShoppingCart, Heart } from "lucide-react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import LoadingScreen from "./LoadingScreen";
-
-interface ProductDetails {
-  images: string[];
-  title: string;
-  description: string;
-  price: number;
-  ratingsAverage: number;
-}
+import { useContext, useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { StarRating } from "./Star-rating"
+import { ImageSlider } from "./Image-slider"
+import { ShoppingCart, Heart, Loader2 } from "lucide-react"
+import { useParams } from "react-router-dom"
+import axios from "axios"
+import LoadingScreen from "./LoadingScreen"
+import RelatedProducts from "./RelatedProducts"
+import type { IProductDetails } from "@/interfaces"
+import { CartContext } from "@/Context/CartContext"
+import { WishlistContext } from "@/Context/WishlistContext"
 
 export default function ProductDetail() {
-  const [isLiked, setIsLiked] = useState(false);
-  const [productDetails, setProductDetails] = useState<ProductDetails | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(false);
+  const [productDetails, setProductDetails] = useState<IProductDetails | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isInWishlist, setIsInWishlist] = useState(false)
 
-  const { id } = useParams<{ id: string }>();
+  const { id, category } = useParams<{ id: string; category: string }>()
+  
+  const cartContext = useContext(CartContext);
+  if (!cartContext) {
+    throw new Error("CartContext must be used within a CartContextProvider");
+  }
+  const { addToCart, isLoading: cartLoading } = cartContext;
 
-  const getProductDetails = async (id: string) => {
-    setIsLoading(true);
+  const wishlistContext = useContext(WishlistContext);
+  if (!wishlistContext) {
+    throw new Error("WishlistContext must be used within a WishlistContextProvider");
+  }
+  const { addToWishlist, removeFromWishlist, query, isLoading: wishlistLoading } = wishlistContext;
+
+  const getProductDetails = async (productId: string) => {
+    setIsLoading(true)
     try {
-      const { data } = await axios.get(
-        `https://ecommerce.routemisr.com/api/v1/products/${id}`
-      );
-      setProductDetails(data.data);
+      const { data } = await axios.get(`https://ecommerce.routemisr.com/api/v1/products/${productId}`)
+      setProductDetails(data.data)
     } catch (error) {
-      console.error("Error fetching product details:", error);
+      console.error("Error fetching product details:", error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    if (query.data && id) {
+      const isLiked = query.data.data.some(item => item._id === id);
+      setIsInWishlist(isLiked);
+    }
+  }, [query.data, id]);
 
   useEffect(() => {
     if (id) {
-      getProductDetails(id);
+      getProductDetails(id)
     }
-  }, [id]);
+  }, [id, category])
+
+  const handleWishlistToggle = async () => {
+    if (!id) return;
+    
+    if (isInWishlist) {
+      await removeFromWishlist(id);
+      setIsInWishlist(false);
+    } else {
+      await addToWishlist(id);
+      setIsInWishlist(true);
+    }
+  };
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   if (!productDetails) {
-    return (
-      <div className="text-center py-10 text-gray-600">
-        Product not found or failed to load.
-      </div>
-    );
+    return <div className="text-center py-10 text-gray-600">Product not found or failed to load.</div>
   }
 
   const LikeEffect = () => (
     <AnimatePresence>
-      {isLiked && (
+      {isInWishlist && (
         <motion.div
           key="like-effect"
           initial={{ scale: 0, opacity: 0 }}
@@ -75,10 +93,11 @@ export default function ProductDetail() {
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
+
   return (
-    <main className=" py-12 px-6 bg-gray-100 min-h-screen ">
-      <Card className="overflow-hidden bg-white shadow-2xl rounded-3xl  ">
+    <main className="py-12 px-6 bg-gray-100 min-h-screen">
+      <Card className="overflow-hidden bg-white shadow-2xl rounded-3xl">
         <CardContent className="p-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="lg:p-8">
@@ -122,46 +141,61 @@ export default function ProductDetail() {
                     ${productDetails.price.toFixed(2)}
                   </span>
 
-
                   <LikeEffect />
 
-
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`p-3 rounded-full transition-all duration-300 ${
-                    isLiked
-                      ? 'bg-red-500 text-white shadow-lg'
-                      : 'bg-white text-gray-400 border border-gray-200 hover:border-red-500 hover:text-red-500'
-                  }`}
-                  onClick={() => setIsLiked(!isLiked)}
-                >
-                  <motion.div
-                    initial={false}
-                    animate={{ scale: isLiked ? [1, 1.2, 1] : 1 ,
-                      rotate: isLiked ? [0, 15, -15, 0] : 0,
-                    }}
-                    
-                    
-                    transition={{ duration: 0.4 }}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`p-3 rounded-full transition-all duration-300 ${
+                      isInWishlist
+                        ? "bg-red-500 text-white shadow-lg"
+                        : "bg-white text-gray-400 border border-gray-200 hover:border-red-500 hover:text-red-500"
+                    }`}
+                    onClick={handleWishlistToggle}
+                    disabled={wishlistLoading}
                   >
-                    <Heart className={`h-6 w-6 ${isLiked ? 'fill-current' : ''}`} />
-                  </motion.div>
-                </motion.button>
-
-
-
-                
+                    {wishlistLoading ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      <motion.div
+                        initial={false}
+                        animate={{ 
+                          scale: isInWishlist ? [1, 1.2, 1] : 1, 
+                          rotate: isInWishlist ? [0, 15, -15, 0] : 0 
+                        }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <Heart className={`h-6 w-6 ${isInWishlist ? "fill-current" : ""}`} />
+                      </motion.div>
+                    )}
+                  </motion.button>
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
-                  <ShoppingCart className="h-6 w-6" />
-                  <span>Add to Cart</span>
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2" 
+                  onClick={() => addToCart(id || "")} 
+                  disabled={cartLoading}
+                >
+                  {cartLoading ? (
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-6 w-6" />
+                      <span>Add to Cart</span>
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      <div className="mt-16">
+        <h2 className="text-center text-4xl font-bold text-gray-800 mb-8 relative">
+          <span className="relative z-10">Related Products</span>
+        </h2>
+        <RelatedProducts category={category || ""} />
+      </div>
     </main>
-  );
+  )
 }

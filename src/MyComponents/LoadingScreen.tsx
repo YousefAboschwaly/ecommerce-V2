@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState , useEffect } from 'react';
 import { ThreeDots } from 'react-loader-spinner';
 import logo from '../assets/freshcart-logo.svg'
